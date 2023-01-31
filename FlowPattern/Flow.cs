@@ -5,7 +5,8 @@ namespace FlowPattern;
 
 using Exceptions;
 
-public abstract class Flow<T> : IFlow
+public abstract class Flow<T, S> : IFlow
+    where S : Flow<T, S>
 {
     public abstract void Start();
     public virtual async Task StartAsync()
@@ -42,9 +43,9 @@ public abstract class Flow<T> : IFlow
     
     private event Action<T> onFlowing;
 
-    public SubFlow<T, Flow<T>> If(Predicate<T> predicate)
-        => new ConditionalFlow<T, Flow<T>>(this, predicate);
+    public SubFlow<T, S> If(Predicate<T> predicate)
+        => new ConditionalFlow<T, S>(this as S, predicate);
     
-    public Flow<T> Act(Action<T> action)
-        => new ActionFlow<T, Flow<T>>(this, action).Ret;
+    public S Act(Action<T> action)
+        => new ActionFlow<T, S>(this as S, action).Ret;
 }

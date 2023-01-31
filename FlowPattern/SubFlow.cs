@@ -5,7 +5,7 @@ namespace FlowPattern;
 
 using Exceptions;
 
-public abstract class SubFlow<T, P> : Flow<T>
+public abstract class SubFlow<T, P> : Flow<T, SubFlow<T, P>>
     where P : IFlow
 {
     public P Ret { get; private set; }
@@ -50,9 +50,4 @@ public abstract class SubFlow<T, P> : Flow<T>
             await flow.ParallelStartAsync();
         else throw InvalidFlowParentException.Default;
     }
-
-    public new SubFlow<T, SubFlow<T, P>> If(Predicate<T> predicate)
-        => new ConditionalFlow<T, SubFlow<T, P>>(this, predicate);
-    public new SubFlow<T, P> Act(Action<T> action)
-        => new ActionFlow<T, SubFlow<T, P>>(this, action).Ret;
 }

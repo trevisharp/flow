@@ -3,7 +3,7 @@ using System.IO;
 
 namespace FlowPattern.Flows;
 
-public class DirectoryFlow : Flow<FileSystemInfo>
+public class DirectoryFlow : Flow<FileSystemInfo, DirectoryFlow>
 {
     private DirectoryInfo dir;
     private DirectoryFlow(string path)
