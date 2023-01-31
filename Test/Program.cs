@@ -1,10 +1,7 @@
-﻿#pragma warning disable CS8321
-
-using static System.Console;
+﻿using static System.Console;
 using System.IO;
 
 using FlowPattern;
-using FlowPattern.Flows;
 
 DirectoryFlow.Create("/")
     .If(x => x is FileInfo)
