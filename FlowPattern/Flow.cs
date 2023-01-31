@@ -9,6 +9,13 @@ public abstract class Flow<T>
     public virtual async Task StartFlowAsync()
         => await Task.Run(StartFlow);
 
+    private Flow<T> parent = null;
+    public Flow<T> Return
+    {
+        get => parent ?? this;
+        protected set => parent = value;
+    }
+
     protected void onFlowing(T data)
     {
         if (OnFlowing != null)
