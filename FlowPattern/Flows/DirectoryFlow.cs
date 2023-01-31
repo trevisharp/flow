@@ -16,10 +16,10 @@ public class DirectoryFlow : Flow<FileSystemInfo>
         this.dir = new DirectoryInfo(path);
     }
 
-    public override void StartFlow()
+    public override void Start()
     {
         foreach (var fileSysInfo in dir.GetFileSystemInfos())
-            onFlowing(fileSysInfo);
+            Flowing(fileSysInfo);
     }
 
     public static DirectoryFlow Create(string path)
