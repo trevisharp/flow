@@ -9,10 +9,10 @@ using FlowPattern.Flows;
 DirectoryFlow.Create("/")
     .If(x => x is FileInfo)
         .Act(x => WriteLine($"Arquivo: {x.Name}"))
-    .Return
+    .Ret
     .If(x => x is DirectoryInfo)
         .If(x => x.Name.Length < 8)
             .Act(x => WriteLine($"Pasta com nome pequeno: {x.Name}"))
-        .Return
-    .Return
+        .Ret
+    .Ret
 .Start();
