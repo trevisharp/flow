@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace FlowPattern.Flows;
 
@@ -20,6 +21,12 @@ public class DirectoryFlow : Flow<FileSystemInfo, DirectoryFlow>
     {
         foreach (var fileSysInfo in dir.GetFileSystemInfos())
             Flowing(fileSysInfo);
+    }
+
+    public override void ParallelStart()
+    {
+        var fileSysInfos = dir.GetFileSystemInfos();
+        Parallel.For(0, fileSysInfos.Length, j => Flowing(fileSysInfos[j]));
     }
 
     public static DirectoryFlow Create(string path)
