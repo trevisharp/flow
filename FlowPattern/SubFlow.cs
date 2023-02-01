@@ -4,7 +4,7 @@ namespace FlowPattern;
 
 using Exceptions;
 
-public abstract class SubFlow<T, P> : Flow<T, SubFlow<T, P>>
+public abstract class SubFlow<T, R, P> : Flow<R, SubFlow<T, R, P>>
     where P : IFlow
 {
     public P Ret { get; private set; }

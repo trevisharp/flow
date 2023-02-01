@@ -42,10 +42,4 @@ public abstract class Flow<T, S> : IFlow
     }
     
     private event Action<T> onFlowing;
-
-    public SubFlow<T, S> If(Predicate<T> predicate)
-        => new ConditionalFlow<T, S>(this as S, predicate);
-    
-    public S Act(Action<T> action)
-        => new ActionFlow<T, S>(this as S, action).Ret;
 }

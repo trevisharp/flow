@@ -1,4 +1,7 @@
-﻿using System;
+﻿#pragma warning disable CS8321
+#pragma warning disable CS4014
+
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,8 +9,24 @@ using static System.Console;
 
 using FlowPattern;
 
-multIfActDirectoryRead();
-asyncParallelFileRead();
+workWithFiles();
+
+void workWithFiles()
+{
+    "/".OpenDirectoryFlow()
+        .If(x => x is FileInfo)
+            .Take(x => x.Name)
+                .Take(x => x.Length)
+                    .Act(x => WriteLine(x))
+                .Ret
+                .Take(x => x[0])
+                    .Act(x => WriteLine(x))
+                .Ret
+            .Ret
+            .Act(x => WriteLine(x.Extension))
+        .Ret
+    .Start();
+}
 
 void multIfActDirectoryRead()
 {
