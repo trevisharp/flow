@@ -1,46 +1,51 @@
 using System;
+using System.Threading.Tasks;
+using FlowPattern.Exceptions;
 
 namespace FlowPattern;
 
-using Flows;
-
-public static class FlowExtension
+public class SubFlow<T, S1, R, S2> : Flow<(T i0, R i1), SubFlow<T, S1, R, S2>>
+    where S1 : Flow<T, S1>
+    where S2 : Flow<R, S2>
 {
-    public static DirectoryFlow OpenDirectoryFlow(this string path)
-        => DirectoryFlow.Create(path); 
-        
-    public static TextFileFlow OpenTextFileFlow(this string path)
-        => TextFileFlow.Create(path); 
-        
-    public static InnerFlow<T, T, S> If<T, S>(this Flow<T, S> flow, Predicate<T> predicate)
-        where S : Flow<T, S> => new ConditionalFlow<T, S>(flow as S, predicate);
-    
-    public static S Act<T, S>(this Flow<T, S> flow, Action<T> action)
-        where S : Flow<T, S> => new ActionFlow<T, S>(flow as S, action).Ret;
-    
-    public static InnerFlow<T, R, S> Take<T, R, S>(this Flow<T, S> flow, Func<T, R> map)
-        where S : Flow<T, S> => new MapFlow<T, R, S>(flow as S, map);
-    
-    public static InnerFlow<T, T, S> Set<T, S>(this Flow<T, S> flow, Func<T, T> map)
-        where S : Flow<T, S> => new MapFlow<T, T, S>(flow as S, map);
-    
-    public static SubFlow<T, tS, R, tS> Zip<T, R, tS, rS>(this Flow<T, tS> flow, Func<T, Flow<R, rS>> creator)
-        where tS : Flow<T, tS>
-        where rS : Flow<(T i0, R i1), rS>
+    private S2 subFlow;
+    public S1 Ret { get; private set; }
+
+    public SubFlow(Flow<T, S1> main, Func<T, Flow<R, S2>> creator)
     {
-        return new SubFlow<T, tS, R, rS>(flow, creator);
+        main.Attach(x =>
+        {
+            var newFlow = creator(x);
+            newFlow.Attach((R y) => Flowing((i0: x, i1: y)));
+            newFlow.Start();
+        });
     }
-    
-    public static InnerFlow<T, (T i0, R i1), S> Zip<T, R, S>(this Flow<T, S> flow, Func<T, R> selector)
-        where S : Flow<T, S> => new MapFlow<T, (T, R), S>(flow as S, x => (x, selector(x)));
-    
-    public static InnerFlow<(T1, T2), (T1 i0, T2 i1, R i2), S> Zip<T1, T2, R, S>(
-        this Flow<(T1, T2), S> flow, Func<(T1, T2), R> selector)
-        where S : Flow<(T1, T2), S> => 
-        new MapFlow<(T1, T2), (T1, T2, R), S>(flow as S, x => (x.Item1, x.Item2, selector(x)));
-    
-    public static InnerFlow<(T1, T2, T3), (T1 i0, T2 i1, T3 i2, R i3), S> Zip<T1, T2, T3, R, S>(
-        this Flow<(T1, T2, T3), S> flow, Func<(T1, T2, T3), R> selector)
-        where S : Flow<(T1, T2, T3), S> => 
-        new MapFlow<(T1, T2, T3), (T1, T2, T3, R), S>(flow as S, x => (x.Item1, x.Item2, x.Item3, selector(x)));
+
+    public override void Start()
+    {
+        if (Ret is IFlow flow)
+            flow.Start();
+        else throw InvalidFlowParentException.Default;
+    }
+
+    public override async Task StartAsync()
+    {
+        if (Ret is IFlow flow)
+            await flow.StartAsync();
+        else throw InvalidFlowParentException.Default;
+    }
+
+    public override void ParallelStart()
+    {
+        if (Ret is IFlow flow)
+            flow.ParallelStart();
+        else throw InvalidFlowParentException.Default;
+    }
+
+    public override async Task ParallelStartAsync()
+    {
+        if (Ret is IFlow flow)
+            await flow.ParallelStartAsync();
+        else throw InvalidFlowParentException.Default;
+    }
 }

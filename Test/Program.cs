@@ -9,24 +9,7 @@ using static System.Console;
 
 using FlowPattern;
 
-workWithFiles();
-
-void workWithFiles()
-{
-    "/".OpenDirectoryFlow()
-        .If(x => x is FileInfo)
-            .Take(x => x.Name)
-                .Take(x => x.Length)
-                    .Act(x => WriteLine(x))
-                .Ret
-                .Take(x => x[0])
-                    .Act(x => WriteLine(x))
-                .Ret
-            .Ret
-            .Act(x => WriteLine(x.Extension))
-        .Ret
-    .Start();
-}
+joinFlowsDirectory();
 
 void multIfActDirectoryRead()
 {
@@ -71,4 +54,47 @@ void asyncParallelFileRead()
             })
         .ParallelStartAsync();
     }
+}
+
+void workWithTake()
+{
+    "/".OpenDirectoryFlow()
+        .If(x => x is FileInfo)
+            .Take(x => x.Name)
+                .Take(x => x.Length)
+                    .Act(x => WriteLine(x))
+                .Ret
+                .Take(x => x[0])
+                    .Act(x => WriteLine(x))
+                .Ret
+            .Ret
+            .Act(x => WriteLine(x.Extension))
+        .Ret
+    .Start();
+}
+
+void zipSetExample()
+{
+    "/".OpenDirectoryFlow()
+        .Zip(x => 0)
+        .Zip(x => 0)
+        .Set(x => x.i0 is FileInfo ? (x.i0, x.i1, x.i2) : (x.i0, x.i1 + 1, x.i2))
+        .Set(x => x.i0 is DirectoryInfo ? (x.i0, x.i1, x.i2) : (x.i0, x.i1, x.i2 + 1))
+        .Set(x => x.i0.Name.Length >= 8 ? (x.i0, x.i1, x.i2) : (x.i0, x.i1 + 1, x.i2))
+        .Set(x => x.i0.Name.Length < 8? (x.i0, x.i1, x.i2) : (x.i0, x.i1, x.i2 + 1))
+        .Act(x => WriteLine(x))
+    .Start();
+}
+
+void joinFlowsDirectory()
+{
+    int count = 0;
+    "/".OpenDirectoryFlow()
+        .If(x => x is FileInfo)
+            .Join(x => x.FullName.OpenTextFileFlow())
+                .Act(x => count++)
+            .Ret
+        .Ret
+    .Start();
+    Console.WriteLine(count);
 }

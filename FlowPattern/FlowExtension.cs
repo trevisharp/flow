@@ -24,12 +24,10 @@ public static class FlowExtension
     public static InnerFlow<T, T, S> Set<T, S>(this Flow<T, S> flow, Func<T, T> map)
         where S : Flow<T, S> => new MapFlow<T, T, S>(flow as S, map);
     
-    public static InnerFlow<R, (T i0, R i1), tS> Zip<T, R, tS, rS>(this Flow<T, tS> flow, Func<T, Flow<R, rS>> creator)
+    public static SubFlow<T, tS, R, rS> Join<T, R, tS, rS>(this Flow<T, tS> flow, Func<T, Flow<R, rS>> creator)
         where tS : Flow<T, tS>
         where rS : Flow<R, rS>
-    {
-        return null;
-    }
+        => new SubFlow<T, tS, R, rS>(flow, creator);
     
     public static InnerFlow<T, (T i0, R i1), S> Zip<T, R, S>(this Flow<T, S> flow, Func<T, R> selector)
         where S : Flow<T, S> => new MapFlow<T, (T, R), S>(flow as S, x => (x, selector(x)));
