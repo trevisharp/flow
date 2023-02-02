@@ -89,8 +89,9 @@ void zipSetExample()
 void joinFlowsDirectory()
 {
     int count = 0;
-    "/".OpenDirectoryFlow()
-        .If(x => x is FileInfo)
+    @"C:\Users\SII5CT\Desktop\flow-main\FlowPattern"
+    .OpenDirectoryFlow()
+        .If(x => x is FileInfo && x.Extension == ".cs")
             .Join(x => x.FullName.OpenTextFileFlow())
                 .Act(x => count++)
             .Ret

@@ -13,6 +13,7 @@ public class SubFlow<T, S1, R, S2> : Flow<(T i0, R i1), SubFlow<T, S1, R, S2>>
 
     public SubFlow(Flow<T, S1> main, Func<T, Flow<R, S2>> creator)
     {
+        Ret = (S1)main;
         main.Attach(x =>
         {
             var newFlow = creator(x);
