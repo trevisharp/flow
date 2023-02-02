@@ -2,7 +2,7 @@ using System;
 
 namespace FlowPattern;
 
-public class ConditionalFlow<T, P> : SubFlow<T, T, P>
+public class ConditionalFlow<T, P> : InnerFlow<T, T, P>
     where P : IFlow
 {
     private Predicate<T> predicate;

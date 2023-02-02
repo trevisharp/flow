@@ -2,7 +2,7 @@ using System;
 
 namespace FlowPattern;
 
-public class ActionFlow<T, P> : SubFlow<T, T, P>
+public class ActionFlow<T, P> : InnerFlow<T, T, P>
     where P : IFlow
 {
     private Action<T> act;

@@ -2,7 +2,7 @@ using System;
 
 namespace FlowPattern;
 
-public class MapFlow<T, R, P> : SubFlow<T, R, P>
+public class MapFlow<T, R, P> : InnerFlow<T, R, P>
     where P : IFlow
 {
     private Func<T, R> func;
