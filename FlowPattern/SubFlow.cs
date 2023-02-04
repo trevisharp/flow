@@ -8,7 +8,6 @@ public class SubFlow<T, S1, R, S2> : Flow<(T i0, R i1), SubFlow<T, S1, R, S2>>
     where S1 : Flow<T, S1>
     where S2 : Flow<R, S2>
 {
-    private S2 subFlow;
     public S1 Ret { get; private set; }
 
     public SubFlow(Flow<T, S1> main, Func<T, Flow<R, S2>> creator)
