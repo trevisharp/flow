@@ -13,7 +13,8 @@ joinFlowsDirectory();
 
 void multIfActDirectoryRead()
 {
-    "/".OpenDirectoryFlow()
+    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..")
+    .OpenDirectoryFlow()
         .If(x => x is FileInfo)
             .Act(x => WriteLine($"Arquivo: {x.Name}"))
         .Ret
@@ -37,7 +38,7 @@ void asyncParallelFileRead()
 
     async Task run()
     {
-        await @"C:\Users\SII5CT\Desktop\flow-main\FlowPattern\Flows\TextFileFlow.cs"
+        await Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..")
         .OpenTextFileFlow()
             .Act(line => 
             {
@@ -58,7 +59,8 @@ void asyncParallelFileRead()
 
 void workWithTake()
 {
-    "/".OpenDirectoryFlow()
+    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..")
+    .OpenDirectoryFlow()
         .If(x => x is FileInfo)
             .Take(x => x.Name)
                 .Take(x => x.Length)
@@ -75,7 +77,8 @@ void workWithTake()
 
 void zipSetExample()
 {
-    "/".OpenDirectoryFlow()
+    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..")
+    .OpenDirectoryFlow()
         .Zip(x => 0)
         .Zip(x => 0)
         .Set(x => x.i0 is FileInfo ? (x.i0, x.i1, x.i2) : (x.i0, x.i1 + 1, x.i2))
@@ -89,13 +92,11 @@ void zipSetExample()
 void joinFlowsDirectory()
 {
     int count = 0;
-    @"C:\Users\SII5CT\Desktop\flow-main\FlowPattern"
+    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..")
     .OpenDirectoryFlow()
-        .If(x => x is FileInfo && x.Extension == ".cs")
+        .If(x => x is FileInfo)
             .Join(x => x.FullName.OpenTextFileFlow())
                 .Act(x => count++)
-            .Ret
-        .Ret
     .Start();
     Console.WriteLine(count);
 }
