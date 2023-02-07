@@ -9,7 +9,7 @@ using static System.Console;
 
 using FlowPattern;
 
-joinFlowsDirectory();
+zipSetExample();
 
 void multIfActDirectoryRead()
 {
@@ -75,18 +75,20 @@ void workWithTake()
     .Start();
 }
 
-void zipSetExample()
+void workingWithGlobalData()
 {
+    int fileCount = 0;
+    int dirCount = 0;
     Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..")
     .OpenDirectoryFlow()
-        .Zip(x => 0)
-        .Zip(x => 0)
-        .Set(x => x.i0 is FileInfo ? (x.i0, x.i1, x.i2) : (x.i0, x.i1 + 1, x.i2))
-        .Set(x => x.i0 is DirectoryInfo ? (x.i0, x.i1, x.i2) : (x.i0, x.i1, x.i2 + 1))
-        .Set(x => x.i0.Name.Length >= 8 ? (x.i0, x.i1, x.i2) : (x.i0, x.i1 + 1, x.i2))
-        .Set(x => x.i0.Name.Length < 8? (x.i0, x.i1, x.i2) : (x.i0, x.i1, x.i2 + 1))
-        .Act(x => WriteLine(x))
+        .If(x => x is FileInfo)
+            .Act(x => fileCount++)
+        .Ret
+        .If(x => x is DirectoryInfo)
+            .Act(x => dirCount++)
+        .Ret
     .Start();
+    Console.WriteLine($"{fileCount} {dirCount}");
 }
 
 void joinFlowsDirectory()
@@ -99,4 +101,29 @@ void joinFlowsDirectory()
                 .Act(x => count++)
     .Start();
     Console.WriteLine(count);
+}
+
+void gaussianWithWindow()
+{
+    DateTime.Now.Noise()
+        .Window(10)
+        .Take(x => x.Average())
+        .Act(x => Console.WriteLine(x))
+    .Start();
+}
+
+void zipSetExample()
+{
+    run();
+
+    WriteLine("Esperando dados...");
+    ReadKey(true);
+
+    async Task run()
+    {
+        await 1.Zip(2)
+            .Take(x => x.Item1 + x.Item2)
+            .Act(x => Console.WriteLine(x))
+        .StartAsync();
+    }
 }
