@@ -1,21 +1,30 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
+/* Author:  Leonardo Trevisan Silio
+ * Date:    03/04/2023
+ */
 using FlowPattern.Exceptions;
+using System.Collections.Generic;
 
 namespace FlowPattern;
 
-public class ZipFlow<T, R, P, S> : Flow<(T, R), ZipFlow<T, R, P, S>>
-    where P : Flow<T, P>
-    where S : Flow<R, S>
+/// <summary>
+/// A flow to Zip/Join two flows in a unique flow.
+/// </summary>
+/// <typeparam name="T">Input data of first flow.</typeparam>
+/// <typeparam name="R">Input data of second flow.</typeparam>
+/// <typeparam name="P">Type of parent flow.</typeparam>
+/// <typeparam name="F">Type of first flow.</typeparam>
+/// <typeparam name="G">Type of second flow.</typeparam>
+public class ZipFlow<T, R, P> : ParentFlow<(T, R), P>
+    where P : IFlow
 {
-    public P Ret => primary;
-
     private Queue<T> primaryQueue = new Queue<T>();
     private Queue<R> secundaryQueue = new Queue<R>();
-    private P primary;
-    private S secondary;
-    public ZipFlow(P primary, S secondary)
+    private Flow<T> primary;
+    private Flow<R> secondary;
+
+    public ZipFlow(Flow<T> primary, Flow<R> secondary)
     {
+        this.Ret = (P)(IFlow)primary;
         this.primary = primary;
         this.secondary = secondary;
         

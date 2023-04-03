@@ -1,8 +1,15 @@
-using System;
+/* Author:  Leonardo Trevisan Silio
+ * Date:    03/04/2023
+ */
 using System.Collections.Generic;
 
 namespace FlowPattern;
 
+/// <summary>
+/// A window flow that get a collection of N sequencial values.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <typeparam name="P"></typeparam>
 public class WindowFlow<T, P> : InnerFlow<T, IEnumerable<T>, P>
     where P : IFlow
 {

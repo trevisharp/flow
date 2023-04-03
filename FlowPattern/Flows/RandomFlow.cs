@@ -1,8 +1,14 @@
+/* Author:  Leonardo Trevisan Silio
+ * Date:    03/04/2023
+ */
 using System;
 
 namespace FlowPattern.Flows;
 
-public class RandomFlow : Flow<float, RandomFlow>
+/// <summary>
+/// Random flow of float values
+/// </summary>
+public class RandomFlow : Flow<float>
 {
     private Random rnd;
     private RandomFlow(int seed)
@@ -14,6 +20,9 @@ public class RandomFlow : Flow<float, RandomFlow>
             Flowing(rnd.NextSingle());
     }
 
+    /// <summary>
+    /// Create a random flow based in a seed to random algorithm.
+    /// </summary>
     public static RandomFlow Create(int seed)
         => new RandomFlow(seed);
 }

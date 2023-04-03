@@ -1,6 +1,13 @@
+/* Author:  Leonardo Trevisan Silio
+ * Date:    03/04/2023
+ */
 namespace FlowPattern.Flows;
 
-public class ConstantFlow<T> : Flow<T, ConstantFlow<T>>
+/// <summary>
+/// A flow to return contantly constant.
+/// </summary>
+/// <typeparam name="T">Type of constant value.</typeparam>
+public class ConstantFlow<T> : Flow<T>
 {
     private T constant;
     private ConstantFlow(T seed)
@@ -12,6 +19,9 @@ public class ConstantFlow<T> : Flow<T, ConstantFlow<T>>
             Flowing(constant);
     }
 
+    /// <summary>
+    /// Create a new constant flow based in a seed.
+    /// </summary>
     public static ConstantFlow<T> Create(T seed)
         => new ConstantFlow<T>(seed);
 }

@@ -1,10 +1,16 @@
+/* Author:  Leonardo Trevisan Silio
+ * Date:    03/04/2023
+ */
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace FlowPattern.Flows;
 
-public class TextFileFlow : Flow<string, TextFileFlow>
+/// <summary>
+/// Flow that open a file and return all of it lines.
+/// </summary>
+public class TextFileFlow : Flow<string>
 {
     private FileInfo file;
     private TextFileFlow(string path)
