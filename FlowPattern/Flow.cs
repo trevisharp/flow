@@ -1,3 +1,6 @@
+/* Author:  Leonardo Trevisan Silio
+ * Date:    03/04/2023
+ */
 using System;
 using System.Threading.Tasks;
 
@@ -5,8 +8,11 @@ namespace FlowPattern;
 
 using Exceptions;
 
-public abstract class Flow<T, S> : IFlow
-    where S : Flow<T, S>
+/// <summary>
+/// A generic Data Flow that work with a T type.
+/// </summary>
+/// <typeparam name="T">The type of data flow.</typeparam>
+public abstract class Flow<T> : IFlow
 {
     public abstract void Start();
     
@@ -23,9 +29,13 @@ public abstract class Flow<T, S> : IFlow
     public virtual async Task ParallelStartAsync()
         => await Task.Run(ParallelStart);
 
+    /// <summary>
+    /// Add a object of type T in data flow.
+    /// </summary>
+    /// <param name="data">Data added to flow.</param>
     public void Flowing(T data)
     {
-        if (onFlowing != null)
+        if (onFlowing is not null)
             onFlowing(data);
     }
 
@@ -36,6 +46,10 @@ public abstract class Flow<T, S> : IFlow
         else throw InvalidDataFlowException.Default;
     }
 
+    /// <summary>
+    /// Attach a event to execute every time that a object is added in this flow.
+    /// </summary>
+    /// <param name="action">The function that recive a object of type T.</param>
     public void Attach(Action<T> action)
         => this.onFlowing += delegate(T x)
         {

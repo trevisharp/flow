@@ -1,14 +1,21 @@
+/* Author:  Leonardo Trevisan Silio
+ * Date:    03/04/2023
+ */
 using System.Threading.Tasks;
 
 namespace FlowPattern;
 
 using Exceptions;
 
-public abstract class InnerFlow<T, R, P> : Flow<R, InnerFlow<T, R, P>>
+/// <summary>
+/// A Inner Flow, a intermediary flow that can transform and operate with data.
+/// </summary>
+/// <typeparam name="T">Type of input data.</typeparam>
+/// <typeparam name="R">Type of output data.</typeparam>
+/// <typeparam name="P">The type of parent flow.</typeparam>
+public abstract class InnerFlow<T, R, P> : ParentFlow<R, P>
     where P : IFlow
 {
-    public P Ret { get; private set; }
-
     protected InnerFlow(P main)
     {
         main.Attach(x =>
@@ -20,6 +27,10 @@ public abstract class InnerFlow<T, R, P> : Flow<R, InnerFlow<T, R, P>>
         this.Ret = main;
     }
 
+    /// <summary>
+    /// This function will be called every time that the parent flow flowing data.
+    /// </summary>
+    /// <param name="x">Data that flowed.</param>
     protected abstract void onMainFlowing(T x);
 
     public override void Start()

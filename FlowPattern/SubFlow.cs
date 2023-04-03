@@ -1,19 +1,25 @@
+/* Author:  Leonardo Trevisan Silio
+ * Date:    03/04/2023
+ */
 using System;
 using System.Threading.Tasks;
 using FlowPattern.Exceptions;
 
 namespace FlowPattern;
 
-public class SubFlow<T, S1, R, S2> : Flow<(T i0, R i1), SubFlow<T, S1, R, S2>>
-    where S1 : Flow<T, S1>
-    where S2 : Flow<R, S2>
+/// <summary>
+/// A Flow that run with other main flow.
+/// </summary>
+/// <typeparam name="T">Input data of the main flow.</typeparam>
+/// <typeparam name="R">Input data of the sub flow.</typeparam>
+/// <typeparam name="P">Type of parent main flow.</typeparam>
+public class SubFlow<T, R, P> : ParentFlow<(T i0, R i1), P>
+    where P : IFlow
 {
-    public S1 Ret { get; private set; }
-
-    public SubFlow(Flow<T, S1> main, Func<T, Flow<R, S2>> creator)
+    public SubFlow(P main, Func<T, Flow<R>> creator)
     {
-        Ret = (S1)main;
-        main.Attach((T x) =>
+        Ret = main;
+        (main as Flow<T>)?.Attach((T x) =>
         {
             var newFlow = creator(x);
             newFlow.Attach((R y) => Flowing((i0: x, i1: y)));

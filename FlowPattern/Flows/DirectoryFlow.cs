@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace FlowPattern.Flows;
 
-public class DirectoryFlow : Flow<FileSystemInfo, DirectoryFlow>
+public class DirectoryFlow : Flow<FileSystemInfo>
 {
     private DirectoryInfo dir;
     private DirectoryFlow(string path)
