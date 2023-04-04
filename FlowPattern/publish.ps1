@@ -1,4 +1,4 @@
-$csproj = gc .\FlowPattern.csproj
+$csproj = gc .\flow.csproj
 $versionText = $csproj | % {
     if ($_.Contains("PackageVersion"))
     {
@@ -29,10 +29,10 @@ for ($i = 0; $i -lt $versionText.Length; $i++)
 }
 
 dotnet pack -c Release
-$file = ".\bin\Release\FlowPattern." + $version + ".nupkg"
-cp $file flow.nupkg
+$file = ".\bin\Release\flow." + $version + ".nupkg"
+cp $file flowing.nupkg
 
 $key = gc .\.env
 
-dotnet nuget push flow.nupkg --api-key $key --source https://api.nuget.org/v3/index.json
-rm .\flow.nupkg
+dotnet nuget push flowing.nupkg --api-key $key --source https://api.nuget.org/v3/index.json
+rm .\flowing.nupkg

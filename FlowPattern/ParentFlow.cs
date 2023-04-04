@@ -1,7 +1,7 @@
 /* Author:  Leonardo Trevisan Silio
  * Date:    03/04/2023
  */
- namespace FlowPattern;
+namespace FlowPattern;
 
 /// <summary>
 /// A Flow with a parent flow.

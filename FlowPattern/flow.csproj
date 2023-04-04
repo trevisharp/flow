@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>flowing</PackageId>
     <TargetFramework>net6.0</TargetFramework>
     <PackageVersion>1.0.0</PackageVersion>
   </PropertyGroup>
