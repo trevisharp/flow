@@ -17,28 +17,72 @@ namespace FlowPattern;
 public class ZipFlow<T, R, P> : ParentFlow<(T, R), P>
     where P : IFlow
 {
-    private Queue<T> primaryQueue = new Queue<T>();
-    private Queue<R> secundaryQueue = new Queue<R>();
+    private Queue<T> primaryQueue = null;
+    private Queue<R> secundaryQueue = null;
+    private bool hasT = false;
+    private T lastT;
+    private bool hasR = false;
+    private R lastR;
     private Flow<T> primary;
     private Flow<R> secondary;
+    private bool latest;
+    private bool repeat;
 
-    public ZipFlow(Flow<T> primary, Flow<R> secondary)
+    public ZipFlow(Flow<T> primary, Flow<R> secondary, bool latest = false, bool repeat = false)
     {
         this.Ret = (P)(IFlow)primary;
         this.primary = primary;
         this.secondary = secondary;
-        
-        primary.Attach((T x) =>
+        this.latest = latest;
+        this.repeat = repeat;
+
+        if (this.latest)
         {
-            primaryQueue.Enqueue(x);
-            tryFlowing();
-        });
-        
-        secondary.Attach((R x) =>
+            primaryQueue = new Queue<T>();
+            secundaryQueue = new Queue<R>();
+
+            primary.Attach((T x) =>
+            {
+                primaryQueue.Enqueue(x);
+                tryFlowing();
+            });
+            
+            secondary.Attach((R x) =>
+            {
+                secundaryQueue.Enqueue(x);
+                tryFlowing();
+            });
+        }
+        else
         {
-            secundaryQueue.Enqueue(x);
-            tryFlowing();
-        });
+            primary.Attach((T x) =>
+            {
+                lastT = x;
+                hasT = true;
+                tryFlowingLatest();
+            });
+            
+            secondary.Attach((R x) =>
+            {
+                lastR = x;
+                hasR = true;
+                tryFlowingLatest();
+            });
+        }
+        
+    }
+
+    public ZipFlow(Flow<T> primary, Flow<R> secondary, ZipMode mode)
+        : this(primary, secondary, mode != ZipMode.EveryPair, mode == ZipMode.LatestRepeat)
+    { }
+
+    private void tryFlowingLatest()
+    {
+        if (!hasT || !hasR)
+            return;
+        
+        hasT = hasR = repeat;
+        Flowing((lastT, lastR));
     }
 
     private void tryFlowing()
